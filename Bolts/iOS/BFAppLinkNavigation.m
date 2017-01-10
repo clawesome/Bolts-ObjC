@@ -111,11 +111,14 @@ static id<BFAppLinkResolving> defaultResolver;
             if (error) {
                 *error = encodingError;
             }
-        } else if ([[UIApplication sharedApplication] openURL:appLinkAppURL]) {
+        }
+        #ifdef APP_COMPATIBLE
+        else if ([[UIApplication sharedApplication] openURL:appLinkAppURL]) {
             retType = BFAppLinkNavigationTypeApp;
             openedURL = appLinkAppURL;
             break;
         }
+        #endif
     }
 
     if (!openedURL && self.appLink.webURL) {
@@ -126,11 +129,14 @@ static id<BFAppLinkResolving> defaultResolver;
             if (error) {
                 *error = encodingError;
             }
-        } else if ([[UIApplication sharedApplication] openURL:appLinkBrowserURL]) {
+        }
+        #ifdef APP_COMPATIBLE
+        else if ([[UIApplication sharedApplication] openURL:appLinkBrowserURL]) {
             // This was a browser navigation.
             retType = BFAppLinkNavigationTypeBrowser;
             openedURL = appLinkBrowserURL;
         }
+        #endif
     }
 
     [self postAppLinkNavigateEventNotificationWithTargetURL:openedURL
@@ -243,10 +249,12 @@ static id<BFAppLinkResolving> defaultResolver;
 - (BFAppLinkNavigationType)navigationType {
     BFAppLinkTarget *eligibleTarget = nil;
     for (BFAppLinkTarget *target in self.appLink.targets) {
+        #ifdef APP_COMPATIBLE
         if ([[UIApplication sharedApplication] canOpenURL:target.URL]) {
             eligibleTarget = target;
             break;
         }
+        #endif
     }
 
     if (eligibleTarget != nil) {

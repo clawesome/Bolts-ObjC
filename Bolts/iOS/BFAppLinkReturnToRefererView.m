@@ -140,6 +140,7 @@ static const CGFloat BFCloseButtonHeight = 12.0;
 }
 
 - (CGFloat)statusBarHeight {
+    #ifdef APP_COMPATIBLE
     UIApplication *application = [UIApplication sharedApplication];
 
     BOOL include;
@@ -161,6 +162,7 @@ static const CGFloat BFCloseButtonHeight = 12.0;
         CGRect statusBarFrame = application.statusBarFrame;
         return landscape ? CGRectGetWidth(statusBarFrame) : CGRectGetHeight(statusBarFrame);
     }
+    #endif
 
     return 0;
 }

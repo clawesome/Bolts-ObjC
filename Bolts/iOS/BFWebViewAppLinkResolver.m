@@ -143,7 +143,7 @@ static NSString *const BFWebViewAppLinkResolverShouldFallbackKey = @"should_fall
     }];
 }
 
-- (BFTask *)appLinkFromURLInBackground:(NSURL *)url NS_EXTENSION_UNAVAILABLE_IOS("") {
+- (BFTask *)appLinkFromURLInBackground:(NSURL *)url {
     return [[self followRedirects:url] continueWithExecutor:[BFExecutor mainThreadExecutor]
                                            withSuccessBlock:^id(BFTask *task) {
                                                NSData *responseData = task.result[@"data"];
@@ -176,8 +176,10 @@ static NSString *const BFWebViewAppLinkResolverShouldFallbackKey = @"should_fall
                                                         MIMEType:response.MIMEType
                                                 textEncodingName:response.textEncodingName
                                                          baseURL:response.URL];
+                                               #ifdef APP_COMPATIBLE
                                                UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
                                                [window addSubview:webView];
+                                                #endif
 
                                                return tcs.task;
                                            }];
@@ -200,7 +202,7 @@ static NSString *const BFWebViewAppLinkResolverShouldFallbackKey = @"should_fall
             continue;
         }
         NSMutableDictionary *root = al;
-        for (NSUInteger i = 1; i < nameComponents.count; i++) {
+        for (int i = 1; i < nameComponents.count; i++) {
             NSMutableArray *children = root[nameComponents[i]];
             if (!children) {
                 children = [NSMutableArray array];
